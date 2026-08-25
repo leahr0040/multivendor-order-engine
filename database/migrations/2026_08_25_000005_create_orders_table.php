@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->ulid()->unique();
             $table->unsignedBigInteger('user_id')->nullable()->index();
-            $table->char('idempotency_key', 26)->nullable()->unique();
+            $table->string('idempotency_key', 64)->nullable()->unique();
             $table->unsignedInteger('original_price');
             $table->unsignedInteger('discount');
             $table->unsignedInteger('final_price');
