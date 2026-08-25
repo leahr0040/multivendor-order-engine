@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $ulid
  * @property int|null $user_id
+ * @property string|null $idempotency_key
  * @property int $original_price
  * @property int $discount
  * @property int $final_price
@@ -26,7 +27,7 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, SubOrder> $sub_orders
  * @property-read Collection<int, OrderItem> $order_items
  */
-#[Fillable(['user_id', 'original_price', 'discount', 'final_price', 'status'])]
+#[Fillable(['user_id', 'idempotency_key', 'original_price', 'discount', 'final_price', 'status'])]
 class Order extends Model
 {
     use HasPublicId;
