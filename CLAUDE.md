@@ -20,7 +20,9 @@ npm run format          # prettier on resources/
 npm run types:check     # tsc --noEmit
 ```
 
-Annotate generics (`Collection<int, Order>`, `HasMany<OrderItem, Order>`) or PHPStan fails.
+Annotate generics (`Collection<int, Order>`, `HasMany<OrderItem, $this>`) or PHPStan fails.
+The declaring model of a relation is `$this`, never the class name — `TDeclaringModel` is
+not covariant, so `HasMany<OrderItem, Order>` is rejected inside `Order` itself.
 
 ### Test environment
 
@@ -55,6 +57,7 @@ Laravel-idiomatic, modular, OOP. Skinny controllers.
 - **One responsibility per class.** Domain logic goes in `app/Actions` or `app/Services` (single public `handle()`/`execute()`), not in controllers or models. Models hold relations, casts, scopes.
 - **Form Requests** for validation, **API/Inertia Resources or typed arrays** for shaping props, **Events + queued Listeners/Notifications** for side effects (vendor notification is a listener, not inline controller code).
 - **Enums** (`app/Enums`) for statuses — never string literals.
+- **snake_case everywhere for data names** — variables, model properties/attributes, array keys, DB columns, JSON/props keys, TS interface fields. Classes stay `StudlyCase`, methods stay `camelCase`. A payload key keeps the same spelling from the DB column through the Resource to the TSX prop — no camelCase conversion at the boundary.
 - Eager-load relations (`with()`); no N+1 in listing endpoints. Wrap multi-write flows (order + sub-orders + items) in `DB::transaction`.
 - `declare(strict_types=1)` is not used by the starter — match surrounding files. Constructor property promotion + typed properties throughout.
 - Frontend: React 19 function components, TypeScript types in `resources/js/types/`, Tailwind v4 utilities, `cn()` from `resources/js/lib/utils.ts` for class merging.
