@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Database\Factories\VendorProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -32,6 +35,28 @@ class VendorProduct extends Model
         return [
             'is_active' => 'boolean',
         ];
+    }
+
+    /** @param  Builder<$this>  $query */
+    #[Scope]
+    protected function active(Builder $query): void
+    {
+        $query->where('is_active', true);
+    }
+
+    /**
+     * @param  Builder<$this>  $query
+     * @param  Collection<int, int>  $product_ids
+     */
+    #[Scope]
+    protected function cheapestFor(Builder $query, Collection $product_ids): void
+    {
+        $ranked_by_price = static::query()
+            ->active()
+            ->whereIn('product_id', $product_ids)
+            ->selectRaw('*, ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY price, id) AS price_rank');
+
+        $query->fromSub($ranked_by_price, $this->getTable())->where('price_rank', 1);
     }
 
     /** @return BelongsTo<Vendor, $this> */
