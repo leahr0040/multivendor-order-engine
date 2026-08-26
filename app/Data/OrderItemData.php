@@ -2,16 +2,14 @@
 
 namespace App\Data;
 
-use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
 
-class PricedCartData extends Data
+class OrderItemData extends Data
 {
-    /**
-     * @param  Collection<int, PricedLineData>  $lines
-     */
     public function __construct(
-        public Collection $lines,
+        public ProductData $product,
+        public int $quantity,
+        public int $original_unit_price,
         public int $original_price,
         public int $discount,
         public int $final_price,

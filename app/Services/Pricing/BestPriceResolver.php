@@ -16,13 +16,7 @@ class BestPriceResolver
      */
     public function resolve(Collection $product_ids): Collection
     {
-        $cheapest_first = VendorProduct::whereIn('product_id', $product_ids)
-            ->where('is_active', true)
-            ->selectRaw('*, ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY price, id) AS price_rank');
-
-        return VendorProduct::query()
-            ->fromSub($cheapest_first, 'vendor_products')
-            ->where('price_rank', 1)
+        return VendorProduct::cheapestFor($product_ids)
             ->with('product.category', 'vendor')
             ->get()
             ->keyBy('product_id');

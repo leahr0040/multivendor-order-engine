@@ -40,6 +40,11 @@ class Order extends Model
         ];
     }
 
+    public function loadDetail(): static
+    {
+        return $this->loadMissing('sub_orders.vendor', 'sub_orders.order_items.product.category');
+    }
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {

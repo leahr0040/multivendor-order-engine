@@ -22,20 +22,35 @@ class CartPriceService
      */
     public function price(Collection $items, ?User $user): PricedCartData|UnavailableProductsData
     {
-        $cheapest_vendor_products = $this->best_price_resolver->resolve($items->pluck('product_id'));
+        $product_ids = $items->pluck('product_id');
+        $cheapest_vendor_products = $this->best_price_resolver->resolve($product_ids);
 
-        $unavailable = $items->pluck('product_id')->reject(fn (int $product_id) => $cheapest_vendor_products->has($product_id));
+        $unavailable = $product_ids->reject(fn (int $product_id) => $cheapest_vendor_products->has($product_id));
 
         if ($unavailable->isNotEmpty()) {
             return new UnavailableProductsData($unavailable->values());
         }
 
-        $lines = $items->map(
-            fn (CartLineData $item) => PricedLineData::fromVendorProduct($cheapest_vendor_products[$item->product_id], $item->quantity)
+        $lines = $items->map(fn (CartLineData $item) => PricedLineData::fromVendorProduct(
+            $cheapest_vendor_products[$item->product_id], $item->quantity
+        ));
+
+        return $this->pricedCart($this->discount_engine->apply($lines, $user));
+    }
+
+    /**
+     * @param  Collection<int, PricedLineData>  $lines
+     */
+    private function pricedCart(Collection $lines): PricedCartData
+    {
+        $original_price = (int) $lines->sum(fn (PricedLineData $line) => $line->original_price);
+        $discount = (int) $lines->sum(fn (PricedLineData $line) => $line->discount);
+
+        return new PricedCartData(
+            lines: $lines,
+            original_price: $original_price,
+            discount: $discount,
+            final_price: $original_price - $discount,
         );
-
-        $lines = $this->discount_engine->apply($lines, $user);
-
-        return PricedCartData::fromLines($lines);
     }
 }
