@@ -2,16 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Enums\OrderStatus;
 use App\Enums\SubOrderStatus;
 use App\Models\SubOrder;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 
 class NotifyVendorJob implements ShouldQueueAfterCommit
 {
-    use Queueable;
+    use Batchable, Queueable;
 
     public function __construct(public SubOrder $sub_order) {}
 
@@ -27,16 +27,5 @@ class NotifyVendorJob implements ShouldQueueAfterCommit
         ]);
 
         $this->sub_order->update(['status' => SubOrderStatus::Completed]);
-
-        $this->completeOrderOnceEveryVendorIsNotified();
-    }
-
-    private function completeOrderOnceEveryVendorIsNotified(): void
-    {
-        $order = $this->sub_order->order;
-
-        if ($order->sub_orders()->where('status', SubOrderStatus::Pending)->doesntExist()) {
-            $order->update(['status' => OrderStatus::Completed]);
-        }
     }
 }
