@@ -54,4 +54,30 @@ class PricedLineData extends Data
             applied_rules: [],
         );
     }
+
+    /**
+     * A discounted copy rather than a mutation, so a rule reading the cart-wide
+     * lines never sees half of them already adjusted.
+     *
+     * @param  array<int, string>  $applied_rules
+     */
+    public function withDiscount(int $discount, array $applied_rules): self
+    {
+        return new self(
+            product_id: $this->product_id,
+            vendor_id: $this->vendor_id,
+            vendor_product_id: $this->vendor_product_id,
+            product_ulid: $this->product_ulid,
+            product_name: $this->product_name,
+            category_slug: $this->category_slug,
+            vendor_ulid: $this->vendor_ulid,
+            vendor_name: $this->vendor_name,
+            quantity: $this->quantity,
+            original_unit_price: $this->original_unit_price,
+            original_price: $this->original_price,
+            discount: $discount,
+            final_price: $this->original_price - $discount,
+            applied_rules: $applied_rules,
+        );
+    }
 }

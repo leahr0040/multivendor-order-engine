@@ -77,6 +77,7 @@ class PlaceOrder
                 'original_price' => $line->original_price,
                 'discount' => $line->discount,
                 'final_price' => $line->final_price,
+                'applied_discount_rules' => $line->applied_rules,
             ])->all()
         );
 

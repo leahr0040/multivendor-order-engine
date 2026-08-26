@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedInteger('original_price');
             $table->unsignedInteger('discount');
             $table->unsignedInteger('final_price');
+            $table->json('applied_discount_rules');
             $table->timestamps();
         });
     }
