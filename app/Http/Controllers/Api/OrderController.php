@@ -19,6 +19,10 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request): JsonResponse
     {
+        if ($replay = $this->place_order->replay($request->idempotencyKey())) {
+            return response()->json(OrderData::from($replay->loadDetail()), 200);
+        }
+
         $priced = $this->cart_price_service->price($request->cartLines(), $request->customer());
 
         if ($priced instanceof UnavailableProductsData) {

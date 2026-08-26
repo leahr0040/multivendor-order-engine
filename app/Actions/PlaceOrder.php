@@ -26,7 +26,7 @@ class PlaceOrder
             $order = DB::transaction(fn () => $this->createOrder($cart, $user, $idempotency_key));
             // no authenticated caller yet, so a replay cannot be scoped to an owner
         } catch (UniqueConstraintViolationException $e) {
-            return Order::where('idempotency_key', $idempotency_key)->first() ?? throw $e;
+            return $this->replay($idempotency_key) ?? throw $e;
         }
 
         $order->load('sub_orders');
@@ -34,6 +34,11 @@ class PlaceOrder
         OrderPlaced::dispatch($order);
 
         return $order;
+    }
+
+    public function replay(string $idempotency_key): ?Order
+    {
+        return Order::firstWhere('idempotency_key', $idempotency_key);
     }
 
     private function createOrder(PricedCartData $cart, ?User $user, string $idempotency_key): Order
