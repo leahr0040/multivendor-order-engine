@@ -1,13 +1,13 @@
-import { Head } from '@inertiajs/react';
+import { Head, InfiniteScroll } from '@inertiajs/react';
 import { useState } from 'react';
 import CartPanel from '@/components/cart-panel';
 import QuantityStepper from '@/components/quantity-stepper';
 import { useCart } from '@/hooks/use-cart';
 import type { Cart } from '@/hooks/use-cart';
-import type { ProductData, UserData } from '@/types/api';
+import type { ProductData, ScrollData, UserData } from '@/types/api';
 
 interface CatalogProps {
-    products: ProductData[];
+    products: ScrollData<ProductData>;
     users: UserData[];
 }
 
@@ -98,15 +98,24 @@ export default function Catalog({ products, users }: CatalogProps) {
                     </label>
                 </header>
 
-                <main className="mx-auto mt-6 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {products.map((product) => (
+                <InfiniteScroll
+                    data="products"
+                    as="main"
+                    className="mx-auto mt-6 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                    loading={
+                        <p className="py-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                            Loading more products…
+                        </p>
+                    }
+                >
+                    {products.data.map((product) => (
                         <ProductCard
                             key={product.ulid}
                             product={product}
                             cart={cart}
                         />
                     ))}
-                </main>
+                </InfiniteScroll>
             </div>
 
             <CartPanel cart={cart} userUlid={userUlid} />
