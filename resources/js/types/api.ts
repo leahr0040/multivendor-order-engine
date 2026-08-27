@@ -20,6 +20,10 @@ export interface ProductData {
     category: CategoryData;
 }
 
+export interface ScrollData<T> {
+    data: T[];
+}
+
 export interface UserData {
     ulid: string;
     name: string;

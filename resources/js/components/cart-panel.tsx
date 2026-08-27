@@ -66,7 +66,7 @@ export default function CartPanel({ cart, userUlid }: CartPanelProps) {
                 type="button"
                 onClick={() => setIsOpen(true)}
                 disabled={cart.items.length === 0}
-                className="fixed right-6 bottom-6 rounded-full bg-[#1b1b18] px-5 py-3 text-sm font-medium text-white shadow-lg disabled:opacity-40 dark:bg-[#EDEDEC] dark:text-[#1b1b18]"
+                className="fixed right-6 bottom-6 rounded-full bg-accent px-5 py-3 text-sm font-medium text-accent-fg shadow-lg transition-shadow hover:shadow-xl focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-40"
             >
                 Review cart ({cart.items.length})
             </button>
@@ -80,7 +80,7 @@ export default function CartPanel({ cart, userUlid }: CartPanelProps) {
                 <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="text-sm text-[#706f6c] underline underline-offset-4 dark:text-[#A1A09A]"
+                    className="text-sm text-[#706f6c] underline underline-offset-4 transition-colors hover:text-accent dark:text-[#A1A09A]"
                 >
                     Close
                 </button>
@@ -128,7 +128,7 @@ export default function CartPanel({ cart, userUlid }: CartPanelProps) {
                             <button
                                 type="button"
                                 onClick={() => cart.remove(line.product_ulid)}
-                                className="ml-auto text-xs text-[#706f6c] underline underline-offset-4 dark:text-[#A1A09A]"
+                                className="ml-auto text-xs text-[#706f6c] underline underline-offset-4 transition-colors hover:text-accent dark:text-[#A1A09A]"
                             >
                                 Remove
                             </button>
@@ -157,7 +157,7 @@ export default function CartPanel({ cart, userUlid }: CartPanelProps) {
                         <>
                             <div className="flex justify-between">
                                 <dt className="text-[#706f6c] dark:text-[#A1A09A]">
-                                    Subtotal
+                                    Before discount
                                 </dt>
                                 <dd>
                                     {formatMoney(pricedCart.original_price)}
@@ -181,7 +181,7 @@ export default function CartPanel({ cart, userUlid }: CartPanelProps) {
                     type="button"
                     onClick={submit}
                     disabled={!pricedCart || isLoading || isSubmitting}
-                    className="w-full rounded-md bg-[#1b1b18] px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40 dark:bg-[#EDEDEC] dark:text-[#1b1b18]"
+                    className="w-full rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-40"
                 >
                     {isSubmitting ? 'Placing order…' : 'Place order'}
                 </button>

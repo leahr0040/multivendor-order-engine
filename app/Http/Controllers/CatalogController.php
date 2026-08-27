@@ -15,10 +15,12 @@ class CatalogController extends Controller
     {
         $products = Product::with('category')
             ->whereRelation('vendor_products', 'is_active', true)
-            ->get();
+            ->orderBy('id')
+            ->paginate(15)
+            ->through(fn (Product $product) => ProductData::from($product));
 
         return Inertia::render('catalog', [
-            'products' => ProductData::collect($products),
+            'products' => Inertia::scroll($products),
             // demo picker for the loyalty-tier discount, not a login substitute
             'users' => UserData::collect(User::all()),
         ]);

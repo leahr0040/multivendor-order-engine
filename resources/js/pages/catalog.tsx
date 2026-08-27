@@ -1,13 +1,28 @@
-import { Head } from '@inertiajs/react';
+import { Head, InfiniteScroll } from '@inertiajs/react';
 import { useState } from 'react';
 import CartPanel from '@/components/cart-panel';
 import QuantityStepper from '@/components/quantity-stepper';
 import { useCart } from '@/hooks/use-cart';
 import type { Cart } from '@/hooks/use-cart';
-import type { ProductData, UserData } from '@/types/api';
+import { cn } from '@/lib/utils';
+import type {
+    CategorySlug,
+    ProductData,
+    ScrollData,
+    UserData,
+} from '@/types/api';
+
+const categoryPill: Record<CategorySlug, string> = {
+    electronics: 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300',
+    books: 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300',
+    home: 'bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300',
+};
+
+const outlineButton =
+    'rounded-md border border-[#e3e3e0] px-3 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none dark:border-[#3E3E3A]';
 
 interface CatalogProps {
-    products: ProductData[];
+    products: ScrollData<ProductData>;
     users: UserData[];
 }
 
@@ -23,18 +38,23 @@ function ProductCard({ product, cart }: ProductCardProps) {
     );
 
     return (
-        <article className="flex flex-col rounded-lg border border-[#e3e3e0] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]">
-            <p className="text-xs tracking-wide text-[#706f6c] uppercase dark:text-[#A1A09A]">
+        <article className="flex flex-col rounded-lg border border-[#e3e3e0] bg-white p-4 transition-shadow hover:shadow-md dark:border-[#3E3E3A] dark:bg-[#161615]">
+            <p
+                className={cn(
+                    'self-start rounded-full px-2 py-0.5 text-xs font-medium tracking-wide uppercase',
+                    categoryPill[product.category.slug],
+                )}
+            >
                 {product.category.name}
             </p>
-            <h2 className="mt-1 font-medium">{product.name}</h2>
+            <h2 className="mt-2 font-medium">{product.name}</h2>
             {product.description && (
-                <p className="mt-1 flex-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                <p className="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
                     {product.description}
                 </p>
             )}
 
-            <div className="mt-4 flex items-center justify-between gap-3">
+            <div className="mt-auto flex items-center justify-between gap-3 pt-4">
                 <QuantityStepper
                     quantity={cartItem?.quantity ?? pendingQuantity}
                     onChange={(nextQuantity) =>
@@ -47,7 +67,10 @@ function ProductCard({ product, cart }: ProductCardProps) {
                     <button
                         type="button"
                         onClick={() => cart.remove(product.ulid)}
-                        className="rounded-md border border-[#e3e3e0] px-3 py-2 text-sm font-medium text-[#706f6c] dark:border-[#3E3E3A] dark:text-[#A1A09A]"
+                        className={cn(
+                            outlineButton,
+                            'text-[#706f6c] dark:text-[#A1A09A]',
+                        )}
                     >
                         Remove from cart
                     </button>
@@ -55,7 +78,7 @@ function ProductCard({ product, cart }: ProductCardProps) {
                     <button
                         type="button"
                         onClick={() => cart.add(product.ulid, pendingQuantity)}
-                        className="rounded-md border border-[#e3e3e0] px-3 py-2 text-sm font-medium dark:border-[#3E3E3A]"
+                        className={outlineButton}
                     >
                         Add to cart
                     </button>
@@ -73,7 +96,7 @@ export default function Catalog({ products, users }: CatalogProps) {
         <>
             <Head title="Catalog" />
 
-            <div className="min-h-screen bg-[#FDFDFC] p-6 text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="min-h-screen bg-gradient-to-b from-[#FDFDFC] to-violet-50/60 p-6 text-[#1b1b18] dark:from-[#0a0a0a] dark:to-violet-950/20 dark:text-[#EDEDEC]">
                 <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4">
                     <h1 className="text-lg font-medium">Catalog</h1>
 
@@ -86,7 +109,7 @@ export default function Catalog({ products, users }: CatalogProps) {
                             onChange={(event) =>
                                 setUserUlid(event.target.value || null)
                             }
-                            className="rounded-md border border-[#e3e3e0] bg-white px-2 py-1 dark:border-[#3E3E3A] dark:bg-[#161615]"
+                            className="rounded-md border border-[#e3e3e0] bg-white px-2 py-1 transition-colors hover:border-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none dark:border-[#3E3E3A] dark:bg-[#161615]"
                         >
                             <option value="">Guest</option>
                             {users.map((user) => (
@@ -98,15 +121,24 @@ export default function Catalog({ products, users }: CatalogProps) {
                     </label>
                 </header>
 
-                <main className="mx-auto mt-6 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {products.map((product) => (
+                <InfiniteScroll
+                    data="products"
+                    as="main"
+                    className="mx-auto mt-6 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                    loading={
+                        <p className="py-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                            Loading more products…
+                        </p>
+                    }
+                >
+                    {products.data.map((product) => (
                         <ProductCard
                             key={product.ulid}
                             product={product}
                             cart={cart}
                         />
                     ))}
-                </main>
+                </InfiniteScroll>
             </div>
 
             <CartPanel cart={cart} userUlid={userUlid} />
