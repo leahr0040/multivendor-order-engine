@@ -9,8 +9,6 @@ use Illuminate\Support\Collection;
 class VendorSplit
 {
     /**
-     * A vendor's share never carries an order-wide adjustment — only what its own lines add up to.
-     *
      * @return Collection<int, PricedCartData> keyed by vendor id
      */
     public function split(PricedCartData $cart): Collection

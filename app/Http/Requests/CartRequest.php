@@ -90,6 +90,7 @@ class CartRequest extends FormRequest
      */
     private function productIds(): Collection
     {
+        // uncached for now; the ulid-to-id map never changes for a row, so cache it at scale
         return once(function (): Collection {
             /** @var Collection<string, int> $ids */
             $ids = Product::whereIn('ulid', $this->productUlids())->pluck('id', 'ulid');
