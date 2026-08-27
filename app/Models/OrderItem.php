@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property int $original_price
  * @property int $discount
  * @property int $final_price
+ * @property array<int, string> $applied_discount_rules
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read SubOrder $sub_order
@@ -31,9 +32,18 @@ use Illuminate\Support\Carbon;
     'original_price',
     'discount',
     'final_price',
+    'applied_discount_rules',
 ])]
 class OrderItem extends Model
 {
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return [
+            'applied_discount_rules' => 'array',
+        ];
+    }
+
     /** @return BelongsTo<SubOrder, $this> */
     public function sub_order(): BelongsTo
     {
