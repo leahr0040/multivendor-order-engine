@@ -6,7 +6,7 @@ use App\Data\PricedCartData;
 use App\Data\PricedLineData;
 use Illuminate\Support\Collection;
 
-class VendorSplit
+class VendorSplitService
 {
     /**
      * @return Collection<int, PricedCartData> keyed by vendor id

@@ -13,7 +13,7 @@ class CategoryDiscountRule implements DiscountRuleInterface
         return collect(config('discounts.category', []))->has($line->category_slug->value);
     }
 
-    public function discountPercentFor(PricedLineData $line, ?User $user): int
+    public function getDiscountPercent(PricedLineData $line, ?User $user): int
     {
         return (int) config('discounts.category.'.$line->category_slug->value, 0);
     }

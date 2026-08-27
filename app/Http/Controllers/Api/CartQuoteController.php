@@ -16,7 +16,7 @@ class CartQuoteController extends Controller
 
     public function __invoke(CartRequest $request): JsonResponse
     {
-        $priced = $this->cart_price_service->price($request->cartLines(), $request->customer());
+        $priced = $this->cart_price_service->calculate($request->cartLines(), $request->customer());
 
         if ($priced instanceof UnavailableProductsData) {
             throw $request->unavailable($priced);
