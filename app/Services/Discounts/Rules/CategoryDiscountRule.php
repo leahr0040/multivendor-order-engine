@@ -10,7 +10,7 @@ class CategoryDiscountRule implements DiscountRuleInterface
 {
     public function isEligible(PricedLineData $line, ?User $user): bool
     {
-        return collect(config('discounts.category', []))->has($line->category_slug->value);
+        return collect(config()->array('discounts.category', []))->has($line->category_slug->value);
     }
 
     public function discountPercentFor(PricedLineData $line, ?User $user): int
