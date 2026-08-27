@@ -16,6 +16,7 @@ class BestPriceResolver
      */
     public function resolve(Collection $product_ids): Collection
     {
+        // re-ranked per quote; cacheable at scale, but placement must read live prices
         return VendorProduct::cheapestFor($product_ids)
             ->with('product.category', 'vendor')
             ->get()
