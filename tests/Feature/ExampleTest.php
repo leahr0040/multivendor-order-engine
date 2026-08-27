@@ -13,7 +13,7 @@ class ExampleTest extends TestCase
     {
         $this->withoutVite();
 
-        $response = $this->get(route('home'));
+        $response = $this->get(route('catalog'));
 
         $response->assertOk();
     }

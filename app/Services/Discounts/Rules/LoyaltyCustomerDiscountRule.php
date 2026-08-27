@@ -12,7 +12,7 @@ class LoyaltyCustomerDiscountRule implements DiscountRuleInterface
     {
         $tier = $user?->loyalty_tier;
 
-        return $tier !== null && collect(config('discounts.loyalty', []))->has($tier->value);
+        return $tier !== null && collect(config()->array('discounts.loyalty', []))->has($tier->value);
     }
 
     public function getDiscountPercent(PricedLineData $line, ?User $user): int
