@@ -14,7 +14,7 @@ class QuantityThresholdDiscountRule implements DiscountRuleInterface
             ->contains(fn (array $threshold) => $line->quantity >= $threshold['min']);
     }
 
-    public function discountPercentFor(PricedLineData $line, ?User $user): int
+    public function getDiscountPercent(PricedLineData $line, ?User $user): int
     {
         $threshold = collect(config('discounts.quantity', []))
             ->filter(fn (array $threshold) => $line->quantity >= $threshold['min'])

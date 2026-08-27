@@ -27,7 +27,7 @@ class DiscountEngineService
         $percents = $this->rules
             ->filter(fn (DiscountRuleInterface $rule) => $rule->isEligible($line, $user))
             ->mapWithKeys(fn (DiscountRuleInterface $rule) => [
-                (string) __('discounts.'.class_basename($rule)) => $rule->discountPercentFor($line, $user),
+                (string) __('discounts.'.class_basename($rule)) => $rule->getDiscountPercent($line, $user),
             ]);
 
         $total_percent = min((int) $percents->sum(), (int) config('discounts.max_percent'));

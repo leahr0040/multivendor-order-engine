@@ -57,7 +57,7 @@ the cart is never silently repaired.
 ## How it works
 
 `CartPriceService` resolves the cheapest active vendor per product in one query, prices each
-line, and hands the cart to `DiscountEngineService`. `PlaceOrder` writes the order, its
+line, and hands the cart to `DiscountEngineService`. `OrderPlacementService` writes the order, its
 vendor sub-orders, and their items in a single transaction, then fires `OrderPlaced`;
 `NotifyVendors` batches a `NotifyVendorJob` per vendor and marks the order completed when the
 batch finishes. Each vendor's totals are the sum of its own lines only — an order-wide

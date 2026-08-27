@@ -22,7 +22,7 @@ class CartPriceService
     /**
      * @param  Collection<int, CartLineData>  $items
      */
-    public function price(Collection $items, ?User $user): PricedCartData|UnavailableProductsData
+    public function calculate(Collection $items, ?User $user): PricedCartData|UnavailableProductsData
     {
         /** @var PricedCartData|UnavailableProductsData $result */
         $result = Pipeline::send($items)
