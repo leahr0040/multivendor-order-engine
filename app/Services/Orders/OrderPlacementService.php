@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace App\Services\Orders;
 
 use App\Data\PricedCartData;
 use App\Data\PricedLineData;
@@ -10,23 +10,22 @@ use App\Events\OrderPlaced;
 use App\Models\Order;
 use App\Models\SubOrder;
 use App\Models\User;
-use App\Services\Orders\VendorSplit;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
-class PlaceOrder
+class OrderPlacementService
 {
     public function __construct(
-        private VendorSplit $vendor_split,
+        private VendorSplitService $vendor_split_service,
     ) {}
 
-    public function handle(PricedCartData $cart, ?User $user, string $idempotency_key): Order
+    public function place(PricedCartData $cart, ?User $user, string $idempotency_key): Order
     {
         try {
             $order = DB::transaction(fn () => $this->createOrder($cart, $user, $idempotency_key));
             // no authenticated caller yet, so a replay cannot be scoped to an owner
         } catch (UniqueConstraintViolationException $e) {
-            return $this->replay($idempotency_key) ?? throw $e;
+            return $this->getPlacedOrder($idempotency_key) ?? throw $e;
         }
 
         $order->load('sub_orders');
@@ -36,7 +35,7 @@ class PlaceOrder
         return $order;
     }
 
-    public function replay(string $idempotency_key): ?Order
+    public function getPlacedOrder(string $idempotency_key): ?Order
     {
         return Order::firstWhere('idempotency_key', $idempotency_key);
     }
@@ -52,7 +51,7 @@ class PlaceOrder
             'status' => OrderStatus::Pending,
         ]);
 
-        $this->vendor_split->split($cart)
+        $this->vendor_split_service->split($cart)
             ->each(fn (PricedCartData $vendor_cart, int $vendor_id) => $this->createSubOrder($order, $vendor_id, $vendor_cart));
 
         return $order;
