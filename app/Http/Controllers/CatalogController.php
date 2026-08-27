@@ -16,7 +16,7 @@ class CatalogController extends Controller
         $products = Product::with('category')
             ->whereRelation('vendor_products', 'is_active', true)
             ->orderBy('id')
-            ->paginate(30)
+            ->paginate(15)
             ->through(fn (Product $product) => ProductData::from($product));
 
         return Inertia::render('catalog', [

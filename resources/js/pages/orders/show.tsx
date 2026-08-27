@@ -19,7 +19,7 @@ function Totals({ totals }: { totals: MoneyTotals }) {
                 <>
                     <div className="flex gap-2">
                         <dt className="text-[#706f6c] dark:text-[#A1A09A]">
-                            Subtotal
+                            Before discount
                         </dt>
                         <dd>{formatMoney(totals.original_price)}</dd>
                     </div>
@@ -42,7 +42,7 @@ export default function OrderShow({ order }: OrderShowProps) {
         <>
             <Head title="Order" />
 
-            <div className="min-h-screen bg-[#FDFDFC] p-6 text-[#1b1b18] dark:bg-[#0a0a0a] dark:text-[#EDEDEC]">
+            <div className="min-h-screen bg-gradient-to-b from-[#FDFDFC] to-violet-50/60 p-6 text-[#1b1b18] dark:from-[#0a0a0a] dark:to-violet-950/20 dark:text-[#EDEDEC]">
                 <div className="mx-auto max-w-3xl space-y-6">
                     <header className="space-y-2">
                         <Link
@@ -58,6 +58,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                             <p className="text-sm text-[#706f6c] dark:text-[#A1A09A]">
                                 {new Date(order.created_at).toLocaleString(
                                     'he-IL',
+                                    { dateStyle: 'short', timeStyle: 'short' },
                                 )}
                             </p>
                         )}
@@ -69,11 +70,11 @@ export default function OrderShow({ order }: OrderShowProps) {
                             key={subOrder.ulid}
                             className="rounded-lg border border-[#e3e3e0] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]"
                         >
-                            <h2 className="font-medium">
+                            <h2 className="border-b border-[#e3e3e0] pb-3 text-base font-semibold dark:border-[#3E3E3A]">
                                 {subOrder.vendor.name}
                             </h2>
 
-                            <ul className="mt-3 divide-y divide-[#e3e3e0] text-sm dark:divide-[#3E3E3A]">
+                            <ul className="mt-1 divide-y divide-[#e3e3e0] text-sm dark:divide-[#3E3E3A]">
                                 {subOrder.order_items.map((orderItem) => (
                                     <li
                                         key={orderItem.product.ulid}
@@ -83,7 +84,7 @@ export default function OrderShow({ order }: OrderShowProps) {
                                             {orderItem.product.name}
                                             <span className="text-[#706f6c] dark:text-[#A1A09A]">
                                                 {' '}
-                                                × {orderItem.quantity} @{' '}
+                                                {orderItem.quantity} ×{' '}
                                                 {formatMoney(
                                                     orderItem.original_unit_price,
                                                 )}

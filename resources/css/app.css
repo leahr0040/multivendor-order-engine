@@ -8,4 +8,13 @@
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+
+    --color-accent: #7c3aed;
+    --color-accent-fg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-accent: #8b5cf6;
+    }
 }

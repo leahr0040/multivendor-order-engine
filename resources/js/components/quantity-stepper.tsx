@@ -13,7 +13,7 @@ export default function QuantityStepper({
                 type="button"
                 aria-label="Decrease quantity"
                 onClick={() => onChange(quantity - 1)}
-                className="h-7 w-7 rounded-md border border-[#e3e3e0] dark:border-[#3E3E3A]"
+                className="h-7 w-7 rounded-md border border-[#e3e3e0] transition-colors hover:border-accent hover:text-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none dark:border-[#3E3E3A]"
             >
                 −
             </button>
@@ -22,7 +22,7 @@ export default function QuantityStepper({
                 type="button"
                 aria-label="Increase quantity"
                 onClick={() => onChange(quantity + 1)}
-                className="h-7 w-7 rounded-md border border-[#e3e3e0] dark:border-[#3E3E3A]"
+                className="h-7 w-7 rounded-md border border-[#e3e3e0] transition-colors hover:border-accent hover:text-accent focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none dark:border-[#3E3E3A]"
             >
                 +
             </button>
