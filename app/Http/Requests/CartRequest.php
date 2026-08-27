@@ -90,11 +90,6 @@ class CartRequest extends FormRequest
      */
     private function productIds(): Collection
     {
-        return once(function (): Collection {
-            /** @var Collection<string, int> $ids */
-            $ids = Product::whereIn('ulid', $this->productUlids())->pluck('id', 'ulid');
-
-            return $ids;
-        });
+        return once(fn (): Collection => Product::idsByUlid($this->productUlids()));
     }
 }
